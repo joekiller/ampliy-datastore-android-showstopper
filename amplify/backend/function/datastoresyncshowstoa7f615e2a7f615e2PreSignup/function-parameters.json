@@ -1,0 +1,17 @@
+{
+  "trigger": true,
+  "modules": [
+    "custom"
+  ],
+  "parentResource": "datastoresyncshowstoa7f615e2a7f615e2",
+  "functionName": "datastoresyncshowstoa7f615e2a7f615e2PreSignup",
+  "resourceName": "datastoresyncshowstoa7f615e2a7f615e2PreSignup",
+  "parentStack": "auth",
+  "triggerEnvs": [],
+  "triggerDir": "/home/jlawson/.nvm/versions/node/v14.16.0/lib/node_modules/@aws-amplify/cli/node_modules/amplify-category-auth/provider-utils/awscloudformation/triggers/PreSignup",
+  "triggerTemplate": "PreSignup.json.ejs",
+  "triggerEventPath": "PreSignup.event.json",
+  "roleName": "datastoresyncshowstoa7f615e2a7f615e2PreSignup",
+  "skipEdit": true,
+  "enableCors": false
+}

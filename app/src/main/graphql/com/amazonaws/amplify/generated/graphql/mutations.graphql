@@ -1,0 +1,46 @@
+# this is an auto generated file. This will be overwritten
+mutation CreateAmplifyBug(
+  $input: CreateAmplifyBugInput!
+  $condition: ModelAmplifyBugConditionInput
+) {
+  createAmplifyBug(input: $input, condition: $condition) {
+    id
+    updated
+    _version
+    _deleted
+    _lastChangedAt
+    createdAt
+    updatedAt
+    owner
+  }
+}
+mutation UpdateAmplifyBug(
+  $input: UpdateAmplifyBugInput!
+  $condition: ModelAmplifyBugConditionInput
+) {
+  updateAmplifyBug(input: $input, condition: $condition) {
+    id
+    updated
+    _version
+    _deleted
+    _lastChangedAt
+    createdAt
+    updatedAt
+    owner
+  }
+}
+mutation DeleteAmplifyBug(
+  $input: DeleteAmplifyBugInput!
+  $condition: ModelAmplifyBugConditionInput
+) {
+  deleteAmplifyBug(input: $input, condition: $condition) {
+    id
+    updated
+    _version
+    _deleted
+    _lastChangedAt
+    createdAt
+    updatedAt
+    owner
+  }
+}

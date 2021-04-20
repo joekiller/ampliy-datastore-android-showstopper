@@ -1,0 +1,4 @@
+type AmplifyBug @model @auth(rules: [{ allow: owner }]) {
+    id: ID!
+    updated: Boolean!
+}

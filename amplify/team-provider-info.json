@@ -1,0 +1,27 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-datastoresyncshowsto-dev-92222-authRole",
+      "UnauthRoleArn": "arn:aws:iam::976940607391:role/amplify-datastoresyncshowsto-dev-92222-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::976940607391:role/amplify-datastoresyncshowsto-dev-92222-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-datastoresyncshowsto-dev-92222-deployment",
+      "UnauthRoleName": "amplify-datastoresyncshowsto-dev-92222-unauthRole",
+      "StackName": "amplify-datastoresyncshowsto-dev-92222",
+      "StackId": "arn:aws:cloudformation:us-east-1:976940607391:stack/amplify-datastoresyncshowsto-dev-92222/734a96f0-a1db-11eb-9b02-12b6efdba9df",
+      "AmplifyAppId": "d3rd14e7urgrlu"
+    },
+    "categories": {
+      "function": {
+        "datastoresyncshowstoa7f615e2a7f615e2PreSignup": {
+          "deploymentBucketName": "amplify-datastoresyncshowsto-dev-92222-deployment",
+          "s3Key": "amplify-builds/datastoresyncshowstoa7f615e2a7f615e2PreSignup-50364d70717750553347-build.zip"
+        }
+      },
+      "auth": {
+        "datastoresyncshowstoa7f615e2a7f615e2": {},
+        "userPoolGroups": {}
+      }
+    }
+  }
+}
