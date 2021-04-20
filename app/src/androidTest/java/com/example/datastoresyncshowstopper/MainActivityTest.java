@@ -1,67 +1,76 @@
 package com.example.datastoresyncshowstopper;
 
-import android.content.Context;
 import android.util.Log;
 
-import com.amplifyframework.AmplifyException;
-import com.amplifyframework.api.aws.AWSApiPlugin;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.amplifyframework.auth.AuthSession;
 import com.amplifyframework.auth.AuthUserAttributeKey;
-import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.auth.result.AuthSignInResult;
 import com.amplifyframework.auth.result.AuthSignUpResult;
 import com.amplifyframework.core.Amplify;
-import com.amplifyframework.core.AmplifyConfiguration;
-import com.amplifyframework.datastore.AWSDataStorePlugin;
+import com.amplifyframework.datastore.DataStoreChannelEventName;
 import com.amplifyframework.datastore.generated.model.AmplifyBug;
-import com.amplifyframework.logging.AndroidLoggingPlugin;
-import com.amplifyframework.logging.LogLevel;
+import com.amplifyframework.hub.HubChannel;
+import com.amplifyframework.hub.HubEvent;
+import com.amplifyframework.hub.SubscriptionToken;
 
+import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-
-import androidx.test.platform.app.InstrumentationRegistry;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 
-public class ExampleInstrumentedTest {
+@RunWith(AndroidJUnit4.class)
+public class MainActivityTest {
+    private static final String ID = UUID.randomUUID().toString();
     private static final String TAG = "amplify:bug";
-    private static final String EMAIL = "test1@test.com";
-    private static final String LOGIN = "test001";
-    private static final String PASSWORD = "EXAMPLE";
+    private static final String EMAIL = ID + "@test.com";
+    private static final String LOGIN = ID;
+    private static final String PASSWORD = "EXAMPLE12354";
+
+    @Rule
+    public ActivityScenarioRule<MainActivity> activityRule = new ActivityScenarioRule<>(MainActivity.class);
 
     @Test
     public void test() {
         Log.i(TAG, "starting test");
 
+        checkAuth();
+        CompletableFuture<HubEvent<?>> readyFuture = new CompletableFuture<>();
+        Amplify.Hub.subscribe(HubChannel.DATASTORE,
+                event -> DataStoreChannelEventName.SYNC_QUERIES_READY.toString().equals(event.getName()),
+                readyFuture::complete);
+
+        Amplify.DataStore.start(
+                () -> Log.d("main", "Amplify DataStore sync explicitly initiated."),
+                error -> Log.e("main", "Amplify DataStore sync did not initiate.", error)
+        );
+
         try {
-            Context context = InstrumentationRegistry.getInstrumentation().getContext();
-            Amplify.addPlugin(new AndroidLoggingPlugin(LogLevel.VERBOSE));
-            Amplify.addPlugin(new AWSCognitoAuthPlugin());
-            Amplify.addPlugin(new AWSDataStorePlugin());
-            Amplify.addPlugin(new AWSApiPlugin());
-            Amplify.configure(AmplifyConfiguration.builder(context).devMenuEnabled(false).build(), context);
-            Log.d(TAG, "Amplify configured.");
-        } catch (AmplifyException e) {
-            Log.w(TAG, "Amplify Failed to Configure; this is likely caused by a duplicate call to Amplify.configure().");
+            readyFuture.get();
+        } catch (ExecutionException | InterruptedException e) {
+            fail(e.getMessage());
         }
 
-        checkAuth();
+        CompletableFuture<AmplifyBug> createFuture = new CompletableFuture<>();
+        CompletableFuture<AmplifyBug> updateFuture = new CompletableFuture<>();
 
+        AmplifyBug createRecord = AmplifyBug.builder().updated(Boolean.FALSE).build();
+        Amplify.DataStore.save(
+                createRecord,
+                success -> createFuture.complete(success.item()),
+                createFuture::completeExceptionally
+        );
         try {
-            CompletableFuture<AmplifyBug> createFuture = new CompletableFuture<>();
-            CompletableFuture<AmplifyBug> updateFuture = new CompletableFuture<>();
-
-            AmplifyBug createRecord = AmplifyBug.builder().updated(Boolean.FALSE).build();
-            Amplify.DataStore.save(
-                    createRecord,
-                    success -> createFuture.complete(success.item()),
-                    createFuture::completeExceptionally
-            );
-
             AmplifyBug createRecordReturned = createFuture.get();
 
             AmplifyBug updateRecord = createRecordReturned.copyOfBuilder().updated(Boolean.TRUE).build();
@@ -71,12 +80,16 @@ public class ExampleInstrumentedTest {
                     updateFuture::completeExceptionally
             );
             updateFuture.get();
-            Thread.sleep(5000); // sleep for 5 seconds to accumulate logs
         } catch (ExecutionException | InterruptedException e) {
             Log.e(TAG, "failed to transact record", e);
             fail(e.getMessage());
         }
 
+        try {
+            Thread.sleep(5000); // sleep for 5 seconds to accumulate logs
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Log.i(TAG, "finishing test");
     }
 
